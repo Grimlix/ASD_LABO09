@@ -18,7 +18,7 @@ using namespace std;
 template < typename T >
 class BinarySearchTree {
 public:
-  
+
   using value_type = T;
   using reference = T&;
   using const_reference = const T&;
@@ -35,7 +35,7 @@ private:
     Node* left;           // sous arbre avec des cles plus petites
     size_t nbElements;    // nombre de noeuds dans le sous arbre dont
                           // ce noeud est la racine
-    
+
     Node(const_reference key)  // seul constructeur disponible. key est obligatoire
     : key(key), right(nullptr), left(nullptr), nbElements(1)
     {
@@ -49,12 +49,12 @@ private:
     Node(const Node&) = delete;  // pas de construction par copie
     Node(Node&&) = delete;       // pas de construction par déplacement
   };
-  
+
   /**
    *  @brief  Racine de l'arbre. nullptr si l'arbre est vide
    */
   Node* _root;
-  
+
 public:
   /**
    *  @brief Constructeur par défaut. Construit un arbre vide
@@ -63,7 +63,7 @@ public:
   {
     /* ... */
   }
-  
+
   /**
    *  @brief Constucteur de copie.
    *
@@ -73,7 +73,7 @@ public:
   BinarySearchTree( BinarySearchTree& other ) {
     /* ... */
   }
-  
+
   /**
    *  @brief Opérateur d'affectation par copie.
    *
@@ -84,7 +84,7 @@ public:
     /* ... */
     return *this;
   }
-  
+
   /**
    *  @brief Echange le contenu avec un autre BST
    *
@@ -94,7 +94,7 @@ public:
   void swap(BinarySearchTree& other ) noexcept {
     /* ... */
   }
-  
+
   /**
    *  @brief constructeur de copie par déplacement
    *
@@ -104,7 +104,7 @@ public:
   BinarySearchTree( BinarySearchTree&& other ) noexcept {
     /* ... */
   }
-  
+
   /**
    *  @brief Opérateur d'affectation par déplacement.
    *
@@ -115,7 +115,7 @@ public:
     /* ... */
     return *this;
   }
-  
+
   //
   // @brief Destructeur
   //
@@ -125,7 +125,7 @@ public:
   ~BinarySearchTree() {
     deleteSubTree( _root );
   }
-  
+
 private:
   //
   // @brief Fonction détruisant (delete) un sous arbre
@@ -149,7 +149,7 @@ public:
   void insert( const_reference key) {
     insert(_root,key);
   }
-  
+
 private:
   //
   // @brief Insertion d'une cle dans un sous-arbre
@@ -165,10 +165,21 @@ private:
   // la fonction peut modifier x, reçu par référence, si nécessaire
   //
   static bool insert(Node*& r, const_reference key) {
-    /* ... */
-    return false;
+	//Si l'arbre est vide
+    if(r == nullptr){
+		r = new Node(key);
+		return true;
+	}
+
+	if(key < r->key){
+		insert(r->left,key);
+	}else if(key > r->key){
+		insert(r->right,key);
+	}else{
+		return false;
+	}
   }
-  
+
 public:
   //
   // @brief Recherche d'une cle.
@@ -183,7 +194,7 @@ public:
   bool contains( const_reference key ) const noexcept {
     return contains(_root,key);
   }
-  
+
 private:
   //
   // @brief Recherche d'une cle dans un sous-arbre
@@ -197,7 +208,7 @@ private:
     /* ... */
     return false;
   }
-  
+
 public:
   //
   // @brief Recherche de la cle minimale.
@@ -211,7 +222,7 @@ public:
   const_reference min() const {
     /* ... */
   }
-  
+
   //
   // @brief Supprime le plus petit element de l'arbre.
   //
@@ -222,8 +233,8 @@ public:
   void deleteMin() {
     /* ... */
   }
-  
-  
+
+
   //
   // @brief Supprime l'element de cle key de l'arbre.
   //
@@ -239,7 +250,7 @@ public:
   bool deleteElement( const_reference key) noexcept {
     return deleteElement( _root, key );
   }
-  
+
 private:
   //
   // @brief Supprime l'element de cle key du sous arbre.
@@ -255,7 +266,7 @@ private:
     /* ... */
     return false;
   }
-  
+
 public:
   //
   // @brief taille de l'arbre
@@ -266,7 +277,7 @@ public:
     /* ... */
     return 0;
   }
-  
+
   //
   // @brief cle en position n
   //
@@ -282,7 +293,7 @@ public:
     /* ... */
     return nth_element(_root,n);
   }
-  
+
 private:
   //
   // @brief cle en position n dans un sous arbre
@@ -298,7 +309,7 @@ private:
     /* ... */
     return -1;
   }
-  
+
 public:
   //
   // @brief position d'une cle dans l'ordre croissant des elements de l'arbre
@@ -313,7 +324,7 @@ public:
   size_t rank(const_reference key) const noexcept {
     return rank(_root,key);
   }
-  
+
 private:
   //
   // @brief position d'une cle dans l'ordre croissant des elements du sous-arbre
@@ -327,7 +338,7 @@ private:
     /* ... */
     return -1;
   }
-  
+
 public:
   //
   // @brief linearise l'arbre
@@ -347,7 +358,7 @@ public:
     linearize(_root,list,cnt);
     _root = list;
   }
-  
+
 private:
   //
   // @brief linearise une sous arbre tree en une liste
@@ -364,7 +375,7 @@ private:
   static void linearize(Node* tree, Node*& list, size_t& cnt) noexcept {
     /* ... */
   }
-  
+
 public:
   //
   // @brief equilibre l'arbre
@@ -380,7 +391,7 @@ public:
     linearize(_root,list,cnt);
     arborize(_root,list,cnt);
   }
-  
+
 private:
   //
   // @brief arborise les cnt premiers elements d'une liste en un arbre
@@ -396,7 +407,7 @@ private:
   //
   static void arborize(Node*& tree, Node*& list, size_t cnt) noexcept {
   }
-  
+
 public:
   //
   // @brief Parcours pre-ordonne de l'arbre
@@ -409,7 +420,7 @@ public:
   void visitPre (Fn f) {
     /* ... */
   }
-  
+
   //
   // @brief Parcours symétrique de l'arbre
   //
@@ -421,7 +432,7 @@ public:
   void visitSym (Fn f) {
     /* ... */
   }
-  
+
   //
   // @brief Parcours post-ordonne de l'arbre
   //
@@ -433,8 +444,8 @@ public:
   void visitPost (Fn f) {
     /* ... */
   }
-  
-  
+
+
   //
   // Les fonctions suivantes sont fournies pour permettre de tester votre classe
   // Merci de ne rien modifier au dela de cette ligne
@@ -445,13 +456,13 @@ public:
     displayKeys(ss3);
     displayCounts(ss2);
     string l1, l2;
-    
+
     size_t W = 11;
     while( getline(ss3,l1) )
       if (l1.length() > W) W = l1.length();
 
     displayKeys(ss1);
-    
+
     cout << "\n";
     cout << "+-" << left << setfill('-') << setw(W) << "-" << "+-" << setw(W) << "-" << setfill(' ') << "+" << endl;
     cout << "| "<< left << setw(W) << "key" << "| " << setw(W) << "nbElements" << "|" << endl;
@@ -462,15 +473,15 @@ public:
     cout << "+-" << left << setfill('-') << setw(W) << "-" << "+-" << setw(W) << "-" << setfill(' ') << "+" << endl;
 
   }
-  
+
   void displayKeys(ostream& os = cout) const {
     display([](Node* n) -> const_reference { return n->key; }, os);
   }
-  
+
   void displayCounts(ostream& os = cout) const {
     display([](Node* n) -> size_t { return n->nbElements; }, os);
   }
-  
+
   //
   // utilise un parcours de l'arbre en largeur avec
   // un noeud sentinelle newLevel qui traque les
@@ -481,15 +492,15 @@ public:
     Node* newLevel = (Node*) -1;
     // addresse non nulle dont on est sur qu'elle ne contient pas
     // vraiment un Node. Utilisée comme sentinelle.
-    
+
     queue<Node*> Q;
     Q.push(_root);
     Q.push(newLevel);
-    
+
     while(!Q.empty()) {
       Node* cur = Q.front();
       Q.pop();
-      
+
       if(cur == newLevel) {
         os << endl;
         if(!Q.empty())
@@ -504,3 +515,19 @@ public:
     }
   }
 };
+int main(){
+
+	BinarySearchTree<int> bst;
+	bst.insert(12);
+	bst.insert(6);
+	bst.insert(15);
+	bst.insert(5);
+	bst.insert(2);
+	bst.insert(7);
+	bst.insert(9);
+	bst.insert(14);
+	bst.insert(18);
+	bst.display();
+
+	return EXIT_SUCCESS;
+}
