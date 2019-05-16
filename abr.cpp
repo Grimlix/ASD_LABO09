@@ -205,8 +205,16 @@ private:
   // @return vrai si la cle trouvee, faux sinon.
   //
   static bool contains(Node* r, const_reference key) noexcept {
-    /* ... */
-    return false;
+	if(r == nullptr){
+		return false;
+	}
+    if(key < r->key){
+		contains(r->left,key);
+	}else if(key > r->key){
+		contains(r->right,key);
+	}else{
+		return true;
+	}
   }
 
 public:
@@ -218,9 +226,15 @@ public:
   // @exception std::logic_error si necessaire
   //
   // vous pouvez mettre en oeuvre de manière iterative ou recursive a choix
-  //
+  // Remarque MAURICE : Pour faire de manière recursive, il faudrait un paramètre dans cette fonction non ?
   const_reference min() const {
-    /* ... */
+	if(_root == nullptr)
+		throw logic_error("Tree is empty");
+	Node * currentNode = _root;
+    while(currentNode->left != nullptr){
+		currentNode = currentNode->left;
+	}
+	return currentNode->key;
   }
 
   //
@@ -231,7 +245,22 @@ public:
   // vous pouvez mettre en oeuvre de manière iterative ou recursive a choix
   //
   void deleteMin() {
-    /* ... */
+	if(_root == nullptr)
+		throw logic_error("Tree is empty");
+  	Node * currentNode = _root;
+	Node * parentNode = nullptr;
+    while(currentNode->left != nullptr){
+		parentNode = currentNode;
+  		currentNode = currentNode->left;
+  	}
+	//Si l'élément min à un enfant droite, on le raccroche au parent
+ 	//de l'élément min (a gauche)
+	if(currentNode->right != nullptr){
+		parentNode->left = currentNode->right;
+	}else{
+		parentNode->left = nullptr;
+	}
+  	delete currentNode;
   }
 
 
@@ -518,15 +547,27 @@ public:
 int main(){
 
 	BinarySearchTree<int> bst;
+	{
 	bst.insert(12);
 	bst.insert(6);
 	bst.insert(15);
 	bst.insert(5);
 	bst.insert(2);
-	bst.insert(7);
+	bst.insert(3);
+	bst.insert(4);
+	bst.insert(8);
 	bst.insert(9);
 	bst.insert(14);
 	bst.insert(18);
+	} //fill BST
+	//Test contains
+	cout << boolalpha << "\nContains ?: "<< bst.contains(8) << endl;
+	//Test min
+	cout << "Min key = "<< bst.min() << endl;
+
+	bst.display();
+	bst.deleteMin();
+
 	bst.display();
 
 	return EXIT_SUCCESS;
