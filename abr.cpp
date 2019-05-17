@@ -68,25 +68,49 @@ public:
    *  @brief Constucteur de copie.
    *
    *  @param other le BinarySearchTree à copier
+   *  Pour crée une copie de l'arbre, on utilise une queue qu'on remplira de tout les
+   *  "root" des subtree à traiter.
+   *  L'idée est de créer un nouveau Node, mais laisser les liens left et right du node
+   *  pointer sur les enfants de l'arbre à copier
    *
    */
   BinarySearchTree( BinarySearchTree& other ) {
-	_root = nullptr;
-	//QUESTION : Est-ce que c'est trop "lourd" de faire de cette manière ?
-	//Parcours en largeur de l'arbre other, et insert de chaque éléments
-	//Note : le parcours en largeur est le seul (?) dispo de manière itérative?
+
+	if(other._root == nullptr)
+		throw logic_error("Cannot copying an empty tree!");
+
+	//Init. de la queue
 	queue<Node*> nodeQueue;
-	Node * currentNode = other._root;
-	while( !nodeQueue.empty() || currentNode != nullptr ){
-		if(currentNode != nullptr){
-			nodeQueue.push(currentNode);
-			currentNode = currentNode->left;
-		}else{
-			currentNode = nodeQueue.front();
-			nodeQueue.pop();
-			insert(currentNode->key);
-			currentNode = currentNode->right;
+	//Cree root avec les bons liens
+	_root = new Node(other._root->key);
+	_root->left = other._root->left;
+	_root->right = other._root->right;
+
+	nodeQueue.push(_root);
+	while(!nodeQueue.empty()){
+		//Si il a un left
+		if(nodeQueue.front()->left != nullptr){
+			//On crée un nouveau node
+			Node* leftNode = new Node(nodeQueue.front()->left->key);
+			//On lui laisse les liens sur ses enfants de l'arbre à copier
+			leftNode->left = nodeQueue.front()->left->left;
+			leftNode->right = nodeQueue.front()->left->right;
+			//On lie le parent à l'enfant (cette fois-ci le vrai)
+			nodeQueue.front()->left = leftNode;
+			//On ajoute ce node dans la liste des node a traiter
+			nodeQueue.push(leftNode);
 		}
+		//Si il y a un right...
+		//Meme comportement que pour left
+		if(nodeQueue.front()->right != nullptr){
+			Node* rightNode = new Node(nodeQueue.front()->right->key);
+			rightNode->right = nodeQueue.front()->right->right;
+			rightNode->left = nodeQueue.front()->right->left;
+			nodeQueue.front()->right = rightNode;
+			nodeQueue.push(rightNode);
+		}
+		//retirer de la liste
+		nodeQueue.pop();
 	}
   }
 
