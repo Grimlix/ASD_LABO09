@@ -71,7 +71,23 @@ public:
    *
    */
   BinarySearchTree( BinarySearchTree& other ) {
-    /* ... */
+	_root = nullptr;
+	//QUESTION : Est-ce que c'est trop "lourd" de faire de cette manière ?
+	//Parcours en largeur de l'arbre other, et insert de chaque éléments
+	//Note : le parcours en largeur est le seul (?) dispo de manière itérative?
+	queue<Node*> nodeQueue;
+	Node * currentNode = other._root;
+	while( !nodeQueue.empty() || currentNode != nullptr ){
+		if(currentNode != nullptr){
+			nodeQueue.push(currentNode);
+			currentNode = currentNode->left;
+		}else{
+			currentNode = nodeQueue.front();
+			nodeQueue.pop();
+			insert(currentNode->key);
+			currentNode = currentNode->right;
+		}
+	}
   }
 
   /**
@@ -292,7 +308,12 @@ private:
   // retourne vrai
   //
   static bool deleteElement( Node*& r, const_reference key) noexcept {
-    /* ... */
+	//Si la clé n'est pas dans l'arbre
+	if(!contains(r,key))
+		return false;
+
+
+
     return false;
   }
 
@@ -447,7 +468,7 @@ public:
   //
   template < typename Fn >
   void visitPre (Fn f) {
-    /* ... */
+
   }
 
   //
@@ -558,17 +579,27 @@ int main(){
 	bst.insert(8);
 	bst.insert(9);
 	bst.insert(14);
+	bst.insert(13);
 	bst.insert(18);
+	bst.insert(17);
 	} //fill BST
+
+	//Constucteur par copie
+	BinarySearchTree<int> bst2(bst);
+	bst.display();
+	bst2.display();
+	/*
 	//Test contains
 	cout << boolalpha << "\nContains ?: "<< bst.contains(8) << endl;
 	//Test min
 	cout << "Min key = "<< bst.min() << endl;
 
+	//Test delete min
 	bst.display();
 	bst.deleteMin();
-
 	bst.display();
-
+	//Test deleteElement
+	cout << bst.deleteElement(29);
+	*/
 	return EXIT_SUCCESS;
 }
