@@ -177,7 +177,14 @@ private:
   //          peut éventuellement valoir nullptr
   //
   static void deleteSubTree(Node* r) noexcept {
-    /* ... */
+
+    //check si il y a des enfants
+	if(r->left != nullptr)
+		deleteSubTree(r->left);
+	if(r->right != nullptr)
+		deleteSubTree(r->right);
+
+	delete r;
   }
 
 public:
@@ -500,7 +507,21 @@ public:
   //
   template < typename Fn >
   void visitPre (Fn f) {
-
+	queue<Node*> nodeQueue;
+	Node* currentNode = _root;
+	while(true){
+		while(currentNode != nullptr){
+			nodeQueue.push(currentNode);
+			currentNode = currentNode->left;
+		}
+		if(nodeQueue.empty()){
+			return;
+		}
+		currentNode = nodeQueue.front();
+		nodeQueue.pop();
+		f(currentNode->key);
+		currentNode = currentNode->right;
+	}
   }
 
   //
@@ -512,7 +533,7 @@ public:
   //
   template < typename Fn >
   void visitSym (Fn f) {
-    /* ... */
+
   }
 
   //
@@ -620,6 +641,7 @@ int main(){
 	BinarySearchTree<int> bst2(bst);
 	bst.display();
 	bst2.display();
+	bst.visitSym([](int key){ cout << key << " ";});
 	/*
 	//Test contains
 	cout << boolalpha << "\nContains ?: "<< bst.contains(8) << endl;
