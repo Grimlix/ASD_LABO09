@@ -85,6 +85,7 @@ public:
 	_root = new Node(other._root->key);
 	_root->left = other._root->left;
 	_root->right = other._root->right;
+	_root->nbElements = other._root->nbElements;
 
 	nodeQueue.push(_root);
 	while(!nodeQueue.empty()){
@@ -95,6 +96,7 @@ public:
 			//On lui laisse les liens sur ses enfants de l'arbre à copier
 			leftNode->left = nodeQueue.front()->left->left;
 			leftNode->right = nodeQueue.front()->left->right;
+			leftNode->nbElements = nodeQueue.front()->left->nbElements;
 			//On lie le parent à l'enfant (cette fois-ci le vrai)
 			nodeQueue.front()->left = leftNode;
 			//On ajoute ce node dans la liste des node a traiter
@@ -106,6 +108,7 @@ public:
 			Node* rightNode = new Node(nodeQueue.front()->right->key);
 			rightNode->right = nodeQueue.front()->right->right;
 			rightNode->left = nodeQueue.front()->right->left;
+			rightNode->nbElements = nodeQueue.front()->right->nbElements;
 			nodeQueue.front()->right = rightNode;
 			nodeQueue.push(rightNode);
 		}
@@ -205,18 +208,23 @@ private:
   // la fonction peut modifier x, reçu par référence, si nécessaire
   //
   static bool insert(Node*& r, const_reference key) {
-	//Si l'arbre est vide
+
+	//Si la clé est déja présente dans l'arbre
+	//On doit être sur que la clé n'est pas déjà présente car
+	//on incrémentera les compteurs sur chaques noeus
+	if(contains(r,key)){
+		return false;
+	}
+	//Si on arrive sur une feuille
     if(r == nullptr){
 		r = new Node(key);
 		return true;
 	}
-
+	r->nbElements++;
 	if(key < r->key){
 		insert(r->left,key);
 	}else if(key > r->key){
 		insert(r->right,key);
-	}else{
-		return false;
 	}
   }
 
