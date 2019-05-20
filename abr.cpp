@@ -12,6 +12,7 @@
 #include <queue>
 #include <cassert>
 #include <stdexcept>
+#include <stack>
 
 using namespace std;
 
@@ -507,20 +508,20 @@ public:
   //
   template < typename Fn >
   void visitPre (Fn f) {
-	queue<Node*> nodeQueue;
-	Node* currentNode = _root;
-	while(true){
-		while(currentNode != nullptr){
-			nodeQueue.push(currentNode);
-			currentNode = currentNode->left;
-		}
-		if(nodeQueue.empty()){
-			return;
-		}
-		currentNode = nodeQueue.front();
-		nodeQueue.pop();
+	if(_root == nullptr)
+		return;
+	//On utilise une stack (TODO : Avec une queue ça na pas l'air de marcher ?)
+	stack<Node*> nodeStack;
+	nodeStack.push(_root);
+	Node* currentNode;
+	while(!nodeStack.empty()){
+		currentNode = nodeStack.top();
+		nodeStack.pop();
 		f(currentNode->key);
-		currentNode = currentNode->right;
+		if(currentNode->right != nullptr)
+			nodeStack.push(currentNode->right);
+		if(currentNode->left != nullptr)
+			nodeStack.push(currentNode->left);
 	}
   }
 
@@ -533,6 +534,21 @@ public:
   //
   template < typename Fn >
   void visitSym (Fn f) {
+	if(_root == nullptr)
+		return;
+	stack<Node*> nodeStack;
+	Node* currentNode = _root;
+	while(!nodeStack.empty() || currentNode != nullptr){
+		if(currentNode != nullptr){
+			nodeStack.push(currentNode);
+			currentNode = currentNode->left;
+		}else{
+			currentNode = nodeStack.top();
+			nodeStack.pop();
+			f(currentNode->key);
+			currentNode = currentNode->right;
+		}
+	}
 
   }
 
@@ -545,9 +561,30 @@ public:
   //
   template < typename Fn >
   void visitPost (Fn f) {
-    /* ... */
-  }
+	if(_root == nullptr)
+		return;
 
+  	stack<Node*> nodeStack;
+	Node* currentNode = _root;
+	Node* prevNode = nullptr;
+	Node* topNode = nullptr;
+
+	while(!nodeStack.empty() || currentNode != nullptr){
+		if(currentNode != nullptr){
+			nodeStack.push(currentNode);
+			currentNode = currentNode->left;
+		}else{
+			topNode = nodeStack.top();
+			if(topNode->right != nullptr && topNode->right != prevNode){
+				currentNode = topNode->right;
+			}else{
+				f(topNode->key);
+				prevNode = topNode;
+				nodeStack.pop();
+			}
+		}
+	}
+  }
 
   //
   // Les fonctions suivantes sont fournies pour permettre de tester votre classe
@@ -618,42 +655,30 @@ public:
     }
   }
 };
+/*
 int main(){
 
 	BinarySearchTree<int> bst;
 	{
-	bst.insert(12);
-	bst.insert(6);
-	bst.insert(15);
+	bst.insert(11);
 	bst.insert(5);
-	bst.insert(2);
-	bst.insert(3);
+	bst.insert(12);
 	bst.insert(4);
-	bst.insert(8);
-	bst.insert(9);
-	bst.insert(14);
+	bst.insert(6);
+	bst.insert(2);
+	bst.insert(15);
 	bst.insert(13);
-	bst.insert(18);
-	bst.insert(17);
 	} //fill BST
 
-	//Constucteur par copie
-	BinarySearchTree<int> bst2(bst);
 	bst.display();
-	bst2.display();
-	bst.visitSym([](int key){ cout << key << " ";});
-	/*
-	//Test contains
-	cout << boolalpha << "\nContains ?: "<< bst.contains(8) << endl;
-	//Test min
-	cout << "Min key = "<< bst.min() << endl;
 
-	//Test delete min
-	bst.display();
-	bst.deleteMin();
-	bst.display();
-	//Test deleteElement
-	cout << bst.deleteElement(29);
-	*/
+	bst.visitPre([](int key){ cout << key << " ";});
+	cout << "\n";
+	bst.visitSym([](int key){ cout << key << " ";});
+	cout << "\n";
+	bst.visitPost([](int key){ cout << key << " ";});
+	cout << "\n";
+
 	return EXIT_SUCCESS;
 }
+*/
