@@ -12,7 +12,6 @@
 #include <queue>
 #include <cassert>
 #include <stdexcept>
-#include <stack>
 
 using namespace std;
 
