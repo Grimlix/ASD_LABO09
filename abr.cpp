@@ -497,7 +497,39 @@ private:
   //
   static void arborize(Node*& tree, Node*& list, size_t cnt) noexcept {
   }
-
+  /*
+  	TODO
+   */
+  template < typename Fn >
+  void visitPreRecursif(Fn f, Node* node){
+	if(node == nullptr)
+		return;
+	f(node->key);
+	visitPreRecursif(f,node->left);
+	visitPreRecursif(f,node->right);
+  }
+  /*
+  	TODO
+   */
+  template < typename Fn >
+  void visitSymRecursif(Fn f, Node* node){
+   if(node == nullptr)
+	   return;
+   visitSymRecursif(f,node->left);
+   f(node->key);
+   visitSymRecursif(f,node->right);
+  }
+  /*
+   TODO
+   */
+  template < typename Fn >
+  void visitPostRecursif(Fn f, Node* node){
+   if(node == nullptr)
+	  return;
+   visitPostRecursif(f,node->left);
+   visitPostRecursif(f,node->right);
+   f(node->key);
+  }
 public:
   //
   // @brief Parcours pre-ordonne de l'arbre
@@ -508,21 +540,7 @@ public:
   //
   template < typename Fn >
   void visitPre (Fn f) {
-	if(_root == nullptr)
-		return;
-	//On utilise une stack (TODO : Avec une queue ça na pas l'air de marcher ?)
-	stack<Node*> nodeStack;
-	nodeStack.push(_root);
-	Node* currentNode;
-	while(!nodeStack.empty()){
-		currentNode = nodeStack.top();
-		nodeStack.pop();
-		f(currentNode->key);
-		if(currentNode->right != nullptr)
-			nodeStack.push(currentNode->right);
-		if(currentNode->left != nullptr)
-			nodeStack.push(currentNode->left);
-	}
+	  visitPreRecursif(f,_root);
   }
 
   //
@@ -534,22 +552,7 @@ public:
   //
   template < typename Fn >
   void visitSym (Fn f) {
-	if(_root == nullptr)
-		return;
-	stack<Node*> nodeStack;
-	Node* currentNode = _root;
-	while(!nodeStack.empty() || currentNode != nullptr){
-		if(currentNode != nullptr){
-			nodeStack.push(currentNode);
-			currentNode = currentNode->left;
-		}else{
-			currentNode = nodeStack.top();
-			nodeStack.pop();
-			f(currentNode->key);
-			currentNode = currentNode->right;
-		}
-	}
-
+	visitSymRecursif(f,_root);
   }
 
   //
@@ -561,29 +564,7 @@ public:
   //
   template < typename Fn >
   void visitPost (Fn f) {
-	if(_root == nullptr)
-		return;
-
-  	stack<Node*> nodeStack;
-	Node* currentNode = _root;
-	Node* prevNode = nullptr;
-	Node* topNode = nullptr;
-
-	while(!nodeStack.empty() || currentNode != nullptr){
-		if(currentNode != nullptr){
-			nodeStack.push(currentNode);
-			currentNode = currentNode->left;
-		}else{
-			topNode = nodeStack.top();
-			if(topNode->right != nullptr && topNode->right != prevNode){
-				currentNode = topNode->right;
-			}else{
-				f(topNode->key);
-				prevNode = topNode;
-				nodeStack.pop();
-			}
-		}
-	}
+	  visitPostRecursif(f,_root);
   }
 
   //
