@@ -59,9 +59,7 @@ public:
   /**
    *  @brief Constructeur par défaut. Construit un arbre vide
    */
-  BinarySearchTree() : _root(nullptr)
-  {
-    /* ... */
+  BinarySearchTree() : _root(nullptr){
   }
 
   /**
@@ -123,9 +121,10 @@ public:
    *  @param other le BinarySearchTree à copier
    *
    */
-  BinarySearchTree& operator= ( const BinarySearchTree& other ) {
-    /* ... */
-    return *this;
+  BinarySearchTree& operator= ( BinarySearchTree& other ) {
+    this->BinarySearchTree::~BinarySearchTree();
+ 	new(this) BinarySearchTree<value_type>(other);
+	return *this;
   }
 
   /**
@@ -135,7 +134,9 @@ public:
    *
    */
   void swap(BinarySearchTree& other ) noexcept {
-    /* ... */
+	  Node* tmp = _root;
+	  _root = other._root;
+	  other._root = tmp;
   }
 
   /**
@@ -145,7 +146,8 @@ public:
    *
    */
   BinarySearchTree( BinarySearchTree&& other ) noexcept {
-    /* ... */
+	//Appel à l'opération d'affectation par déplacement
+	*this = move(other);
   }
 
   /**
@@ -155,7 +157,8 @@ public:
    *
    */
   BinarySearchTree& operator= ( BinarySearchTree&& other ) noexcept {
-    /* ... */
+	_root = other._root;
+  	other._root = nullptr;
     return *this;
   }
 
@@ -177,7 +180,7 @@ private:
   //          peut éventuellement valoir nullptr
   //
   static void deleteSubTree(Node* r) noexcept {
-
+	if(r == nullptr) return;
     //check si il y a des enfants
 	if(r->left != nullptr)
 		deleteSubTree(r->left);
@@ -336,9 +339,6 @@ public:
   }
 
 private:
-  void setRoot(Node* node){
-	  _root = node;
-  }
   //
   // @brief Supprime l'element de cle key du sous arbre.
   //
@@ -677,39 +677,37 @@ public:
 int main(){
 
 	BinarySearchTree<int> bst;
+	BinarySearchTree<int> bst2;
 	{
-	bst.insert(10);
-	bst.insert(12);
-	bst.insert(16);
-	bst.insert(15);
-	bst.insert(7);
+		bst.insert(10);
+		bst.insert(12);
+		bst.insert(16);
+		bst.insert(15);
+		bst.insert(7);
 
-	bst.insert(5);
-	bst.insert(11);
-	bst.insert(4);
-	bst.insert(2);
-	bst.insert(6);
+		bst.insert(5);
+		bst.insert(11);
+		bst.insert(4);
+		bst.insert(2);
+		bst.insert(6);
 
-	bst.insert(13);
-	bst.insert(14);
+		bst.insert(13);
+		bst.insert(14);
 	} //fill BST
-
-	// bst.deleteMin();
-	// bst.deleteMin();
+	{
+		bst2.insert(99);
+		bst2.insert(11);
+		bst2.insert(22);
+		bst2.insert(33);
+		bst2.insert(44);
+		bst2.insert(44);
+	}
 	bst.display();
-	bst.deleteElement(12);
-		bst.display();
-	bst.deleteElement(16);
+	bst2.display();
+	bst.swap(bst2);
 	bst.display();
-	//bst.deleteElement(12);
+	bst2.display();
 
-	//
-	//bst.visitPre([](int key){ cout << key << " ";});
-	// cout << "\n";
-	// bst.visitSym([](int key){ cout << key << " ";});
-	// cout << "\n";
-	// bst.visitPost([](int key){ cout << key << " ";});
-	// cout << "\n";
-
+	cout << "\n\nend prog\n";
 	return EXIT_SUCCESS;
 }
