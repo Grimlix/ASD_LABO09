@@ -72,49 +72,12 @@ public:
    *  pointer sur les enfants de l'arbre à copier
    *
    */
-  BinarySearchTree( BinarySearchTree& other ) {
-
-	if(other._root == nullptr)
-		throw logic_error("Cannot copying an empty tree!");
-
-	//Init. de la queue
-	queue<Node*> nodeQueue;
-	//Cree root avec les bons liens
-	_root = new Node(other._root->key);
-	_root->left = other._root->left;
-	_root->right = other._root->right;
-	_root->nbElements = other._root->nbElements;
-
-	nodeQueue.push(_root);
-	while(!nodeQueue.empty()){
-		//Si il a un left
-		if(nodeQueue.front()->left != nullptr){
-			//On crée un nouveau node
-			Node* leftNode = new Node(nodeQueue.front()->left->key);
-			//On lui laisse les liens sur ses enfants de l'arbre à copier
-			leftNode->left = nodeQueue.front()->left->left;
-			leftNode->right = nodeQueue.front()->left->right;
-			leftNode->nbElements = nodeQueue.front()->left->nbElements;
-			//On lie le parent à l'enfant (cette fois-ci le vrai)
-			nodeQueue.front()->left = leftNode;
-			//On ajoute ce node dans la liste des node a traiter
-			nodeQueue.push(leftNode);
-		}
-		//Si il y a un right...
-		//Meme comportement que pour left
-		if(nodeQueue.front()->right != nullptr){
-			Node* rightNode = new Node(nodeQueue.front()->right->key);
-			rightNode->right = nodeQueue.front()->right->right;
-			rightNode->left = nodeQueue.front()->right->left;
-			rightNode->nbElements = nodeQueue.front()->right->nbElements;
-			nodeQueue.front()->right = rightNode;
-			nodeQueue.push(rightNode);
-		}
-		//retirer de la liste
-		nodeQueue.pop();
+  BinarySearchTree( BinarySearchTree& other ):_root(nullptr) {
+	if(other._root != nullptr){
+		_root = new Node(other._root->key);
+		copyInOrder(other._root, _root);
 	}
   }
-
   /**
    *  @brief Opérateur d'affectation par copie.
    *
@@ -173,6 +136,29 @@ public:
   }
 
 private:
+	/**
+	 * TODO
+	 * @param other   [description]
+	 * @param newNode [description]
+	 */
+  void copyInOrder(Node* other,Node* copyNode){
+	  if(other != nullptr){
+		  //Copie du nb element
+		  copyNode->nbElements = other->nbElements;
+		  //Copie l'enfant de gauche
+		  if(other->left != nullptr){
+		  	Node* newLeftNode = new Node(other->left->key);
+			copyNode->left = newLeftNode;
+			copyInOrder(other->left,copyNode->left);
+		  }
+		  //Copie de l'enfant de droite
+		  if(other->right != nullptr){
+		  	Node* newRightNode = new Node(other->right->key);
+			copyNode->right = newRightNode;
+			copyInOrder(other->right,copyNode->right);
+		  }
+	  }
+  }
   //
   // @brief Fonction détruisant (delete) un sous arbre
   //
@@ -371,7 +357,6 @@ private:
 		   r = r->left;
 		   delete deleteNode;
 		   return true;
-
 	   }else if(r->left == nullptr){
 		   r = r->right;
 		   delete deleteNode;
