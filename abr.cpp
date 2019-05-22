@@ -395,8 +395,7 @@ public:
   // @return le nombre d'elements de l'arbre
   //
   size_t size() const noexcept {
-    /* ... */
-    return 0;
+     return _root->nbElements;
   }
 
   //
@@ -456,8 +455,14 @@ private:
   // @return la position entre 0 et size()-1, size_t(-1) si la cle est absente
   //
   static size_t rank(Node* r, const_reference key) noexcept {
-    /* ... */
-    return -1;
+     if(r == nullptr){return 0;}
+     if(key < r->key){
+        return rank(r->left, key);
+     }else if(key > r->key){
+        return rank(r->right, key) + r->left->nbElements + 1;
+     }else{
+        return r->left->nbElements;
+     }
   }
 
 public:
