@@ -336,6 +336,9 @@ public:
   }
 
 private:
+  void setRoot(Node* node){
+	  _root = node;
+  }
   //
   // @brief Supprime l'element de cle key du sous arbre.
   //
@@ -347,15 +350,50 @@ private:
   // retourne vrai
   //
   static bool deleteElement( Node*& r, const_reference key) noexcept {
-	//Si la clé n'est pas dans l'arbre
-	if(!contains(r,key))
-		return false;
+   //Si la clé n'est pas dans l'arbre
+   if(!contains(r,key))
+	   return false;
 
+   if(key < r->key){
+	   deleteElement(r->left,key);
+	   r->nbElements--;
+   }else if(key > r->key){
+	   deleteElement(r->right,key);
+	   r->nbElements--;
+   }else{
+	   //Element trouvé
+	   Node* deleteNode = r;
+	   if(r->right == nullptr){
+		   r = r->left;
+		   delete deleteNode;
+		   return true;
 
+	   }else if(r->left == nullptr){
+		   r = r->right;
+		   delete deleteNode;
+		   return true;
+	   //Suppression de Hibbard
+	   }else{
+		   //trouver l'élément min droite
+		   Node* minRight = r->right;
+		   Node* parentMinRight = r;
 
-    return false;
-  }
-
+		   while(minRight->left != nullptr){
+			   parentMinRight = minRight;
+			   minRight = minRight->left;
+		   }
+		   //Enfant du parent de minRight = enfant droite minRight
+		   parentMinRight->left = minRight->right;
+		   //enfant du minRight = deleteNode->right
+		   minRight->right = r->right;
+		   minRight->left = r->left;
+		   r = minRight;
+		   delete deleteNode;
+		   return true;
+	   }
+   }
+   return true;
+ }
 public:
   //
   // @brief taille de l'arbre
@@ -635,30 +673,43 @@ public:
     }
   }
 };
-/*
+
 int main(){
 
 	BinarySearchTree<int> bst;
 	{
-	bst.insert(11);
-	bst.insert(5);
+	bst.insert(10);
 	bst.insert(12);
-	bst.insert(4);
-	bst.insert(6);
-	bst.insert(2);
+	bst.insert(16);
 	bst.insert(15);
+	bst.insert(7);
+
+	bst.insert(5);
+	bst.insert(11);
+	bst.insert(4);
+	bst.insert(2);
+	bst.insert(6);
+
 	bst.insert(13);
+	bst.insert(14);
 	} //fill BST
 
+	// bst.deleteMin();
+	// bst.deleteMin();
 	bst.display();
+	bst.deleteElement(12);
+		bst.display();
+	bst.deleteElement(16);
+	bst.display();
+	//bst.deleteElement(12);
 
-	bst.visitPre([](int key){ cout << key << " ";});
-	cout << "\n";
-	bst.visitSym([](int key){ cout << key << " ";});
-	cout << "\n";
-	bst.visitPost([](int key){ cout << key << " ";});
-	cout << "\n";
+	//
+	//bst.visitPre([](int key){ cout << key << " ";});
+	// cout << "\n";
+	// bst.visitSym([](int key){ cout << key << " ";});
+	// cout << "\n";
+	// bst.visitPost([](int key){ cout << key << " ";});
+	// cout << "\n";
 
 	return EXIT_SUCCESS;
 }
-*/
