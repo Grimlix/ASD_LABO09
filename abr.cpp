@@ -303,13 +303,16 @@ public:
   // vous pouvez mettre en oeuvre de manière iterative ou recursive a choix
   //
   void deleteMin() {
-	if(_root == nullptr)
-		throw logic_error("Tree is empty");
-  	Node * currentNode = _root;
-	Node * parentNode = nullptr;
+  	if(_root == nullptr){
+      throw logic_error("Tree is empty");    
+    }
+    	
+    Node * currentNode = _root;
+	  Node * parentNode = nullptr;
     while(currentNode->left != nullptr){
-		parentNode = currentNode;
+	   	parentNode = currentNode;
   		currentNode = currentNode->left;
+      currentNode->nbElements--;
   	}
 	//Si l'élément min à un enfant droite, on le raccroche au parent
  	//de l'élément min (a gauche)
@@ -318,6 +321,7 @@ public:
 	}else{
 		parentNode->left = nullptr;
 	}
+    _root->nbElements--;
   	delete currentNode;
   }
 
@@ -381,13 +385,18 @@ private:
 		   while(minRight->left != nullptr){
 			   parentMinRight = minRight;
 			   minRight = minRight->left;
+         minRight->nbElements--;
 		   }
+
+       size_t x = r->nbElements-1;
 		   //Enfant du parent de minRight = enfant droite minRight
 		   parentMinRight->left = minRight->right;
 		   //enfant du minRight = deleteNode->right
+       r->right->nbElements--;
 		   minRight->right = r->right;
 		   minRight->left = r->left;
 		   r = minRight;
+       r->nbElements = x;
 		   delete deleteNode;
 		   return true;
 	   }
@@ -673,41 +682,3 @@ public:
     }
   }
 };
-
-int main(){
-
-	BinarySearchTree<int> bst;
-	BinarySearchTree<int> bst2;
-	{
-		bst.insert(10);
-		bst.insert(12);
-		bst.insert(16);
-		bst.insert(15);
-		bst.insert(7);
-
-		bst.insert(5);
-		bst.insert(11);
-		bst.insert(4);
-		bst.insert(2);
-		bst.insert(6);
-
-		bst.insert(13);
-		bst.insert(14);
-	} //fill BST
-	{
-		bst2.insert(99);
-		bst2.insert(11);
-		bst2.insert(22);
-		bst2.insert(33);
-		bst2.insert(44);
-		bst2.insert(44);
-	}
-	bst.display();
-	bst2.display();
-	bst.swap(bst2);
-	bst.display();
-	bst2.display();
-
-	cout << "\n\nend prog\n";
-	return EXIT_SUCCESS;
-}
