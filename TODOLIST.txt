@@ -1,0 +1,14 @@
+
+CODECHECK 2 : 
+   - Affichage des nombre d'éléments de chaques noeuds (update du champ "nbElements" dans les méthodes du BST)
+      - Flo
+   - Size()
+      - Nico
+   - nth_elements
+      - Flo
+   - Rank
+      - Nico
+   - constructeur par copie et affectaction par copie ET par déplacement
+      - Maurice
+   - Swap
+      - Maurice   
