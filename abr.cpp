@@ -469,17 +469,37 @@ private:
   //
   // @return la position entre 0 et size()-1, size_t(-1) si la cle est absente
   //
-  static size_t rank(Node* r, const_reference key) noexcept {
-     if(r == nullptr){return 0;}
-     if(key < r->key){
-        return rank(r->left, key);
-     }else if(key > r->key){
-        return rank(r->right, key) + r->left->nbElements + 1;
-     }else{
-        return r->left->nbElements;
-     }
-  }
+   static size_t rank(Node* r, const_reference key) noexcept {
 
+      if (r == nullptr) {
+         return -1;
+      }
+
+      size_t nbElementLeftNode = 0;
+      size_t nbElementRightNode = 0;
+      // on vérifie si la partie de gauche est vide avant
+      if (r->left != nullptr) {
+         nbElementLeftNode = r->left->nbElements;
+      }
+
+      if (key < r->key) {
+         return rank(r->left, key);
+      } else if (key > r->key) {
+         nbElementRightNode = rank(r->right, key);
+  
+         if (nbElementRightNode == -1) {
+            return nbElementRightNode;
+         }
+         return nbElementRightNode + nbElementLeftNode + 1;
+         
+      } else{
+         return nbElementLeftNode;
+      }
+   }
+   
+   
+   
+   
 public:
   //
   // @brief linearise l'arbre
@@ -687,3 +707,41 @@ public:
     }
   }
 };
+
+//int main(){
+//
+//	BinarySearchTree<int> bst;
+//	{
+//	bst.insert(10);
+//	bst.insert(12);
+//	bst.insert(16);
+//	bst.insert(15);
+//	bst.insert(7);
+//
+//	bst.insert(5);
+//	bst.insert(11);
+//	bst.insert(4);
+//	bst.insert(2);
+//	bst.insert(6);
+//
+//	bst.insert(13);
+//	bst.insert(14);
+//	} //fill BST
+//
+//	 bst.deleteMin();
+//	 bst.deleteMin();
+//	bst.display();
+//        cout << bst.rank(12);
+//        
+//	//bst.deleteElement(12);
+//
+//	//
+//	//bst.visitPre([](int key){ cout << key << " ";});
+//	// cout << "\n";
+//	// bst.visitSym([](int key){ cout << key << " ";});
+//	// cout << "\n";
+//	// bst.visitPost([](int key){ cout << key << " ";});
+//	// cout << "\n";
+//
+//	return EXIT_SUCCESS;
+//}
