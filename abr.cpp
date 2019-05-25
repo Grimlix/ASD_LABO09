@@ -410,7 +410,9 @@ public:
   // la fonction recursive nth_element(Node*, n)
   //
   const_reference nth_element(size_t n) const {
-    /* ... */
+    if(n > _root->nbElements){
+      throw logic_error("arbre has less elements than what you seek");
+    }
     return nth_element(_root,n);
   }
 
@@ -426,8 +428,21 @@ private:
   //
   static const_reference nth_element(Node* r, size_t n) noexcept {
     assert(r != nullptr);
-    /* ... */
-    return -1;
+
+    size_t nbElementLeftNode = 0;
+
+    if(r->left) {
+      nbElementLeftNode += r->left->nbElements;
+    }
+
+    if(n == nbElementLeftNode) {
+      return r->key;
+    }
+    if(n < nbElementLeftNode) {
+      return nth_element(r->left, n);
+    } else if(n > nbElementLeftNode){
+      return nth_element(r->right, n - nbElementLeftNode - 1);
+    } 
   }
 
 public:
