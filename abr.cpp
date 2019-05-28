@@ -1,3 +1,15 @@
+/*
+ -----------------------------------------------------------------------------------
+ Laboratoire : ASD_09
+ Fichier     : main.cpp
+ Auteur(s)   : Maurice Lehmann, Nicolas Hungerbühler, Florian Schaufelberger
+ Date        : 28.05.2019
+
+ But         : Mise en place d'un Arbre Binaire de Recherche
+
+ Compilateur : MinGW-g++ 6.3.0
+ -----------------------------------------------------------------------------------
+*/
 //
 //  Binary Search Tree
 //
@@ -290,9 +302,9 @@ public:
   //
   void deleteMin() {
   	if(_root == nullptr){
-      throw logic_error("Tree is empty");    
+      throw logic_error("Tree is empty");
     }
-    	
+
     Node * currentNode = _root;
 	  Node * parentNode = nullptr;
     while(currentNode->left != nullptr){
@@ -363,15 +375,15 @@ private:
 		   return true;
 	   //Suppression de Hibbard
 	   }else{
-		   //trouver l'élément min droite
-		   Node* minRight = r->right;
-		   Node* parentMinRight = r;
+	   //trouver l'élément min droite
+	   Node* minRight = r->right;
+	   Node* parentMinRight = r;
 
-		   while(minRight->left != nullptr){
-			   parentMinRight = minRight;
-			   minRight = minRight->left;
-         minRight->nbElements--;
-		   }
+	   while(minRight->left != nullptr){
+		   parentMinRight = minRight;
+		   minRight = minRight->left;
+     	   minRight->nbElements--;
+	   }
 
        size_t x = r->nbElements-1;
 		   //Enfant du parent de minRight = enfant droite minRight
@@ -411,7 +423,7 @@ public:
   //
   const_reference nth_element(size_t n) const {
     if(n > _root->nbElements){
-      throw logic_error("arbre has less elements than what you seek");
+      throw logic_error("tree has less elements than what you seek");
     }
     return nth_element(_root,n);
   }
@@ -442,7 +454,7 @@ private:
       return nth_element(r->left, n);
     } else if(n > nbElementLeftNode){
       return nth_element(r->right, n - nbElementLeftNode - 1);
-    } 
+    }
   }
 
 public:
@@ -486,20 +498,20 @@ private:
          return rank(r->left, key);
       } else if (key > r->key) {
          nbElementRightNode = rank(r->right, key);
-  
+
          if (nbElementRightNode == -1) {
             return nbElementRightNode;
          }
          return nbElementRightNode + nbElementLeftNode + 1;
-         
+
       } else{
          return nbElementLeftNode;
       }
    }
-   
-   
-   
-   
+
+
+
+
 public:
   //
   // @brief linearise l'arbre
@@ -732,7 +744,7 @@ public:
 //	 bst.deleteMin();
 //	bst.display();
 //        cout << bst.rank(12);
-//        
+//
 //	//bst.deleteElement(12);
 //
 //	//
