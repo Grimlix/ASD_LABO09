@@ -546,7 +546,14 @@ private:
   //             avez uniquement le droit d'utiliser l'opérateur ++.
   //
   static void linearize(Node* tree, Node*& list, size_t& cnt) noexcept {
-    /* ... */
+    if(tree == nullptr)
+		return;
+	linearize(tree->right,list,cnt);
+	tree->right = list;
+	list = tree;
+	++cnt;
+	linearize(tree->left,list,cnt);
+	tree->left = nullptr;
   }
 
 public:
@@ -562,7 +569,12 @@ public:
     size_t cnt = 0;
     Node* list = nullptr;
     linearize(_root,list,cnt);
-    arborize(_root,list,cnt);
+	cout << "cnt = " << cnt << "\n";
+	while(list != nullptr){
+		cout << list->key << " -> ";
+		list = list->right;
+	}
+    //arborize(_root,list,cnt);
   }
 
 private:
@@ -720,40 +732,23 @@ public:
   }
 };
 
-//int main(){
-//
-//	BinarySearchTree<int> bst;
-//	{
-//	bst.insert(10);
-//	bst.insert(12);
-//	bst.insert(16);
-//	bst.insert(15);
-//	bst.insert(7);
-//
-//	bst.insert(5);
-//	bst.insert(11);
-//	bst.insert(4);
-//	bst.insert(2);
-//	bst.insert(6);
-//
-//	bst.insert(13);
-//	bst.insert(14);
-//	} //fill BST
-//
-//	 bst.deleteMin();
-//	 bst.deleteMin();
-//	bst.display();
-//        cout << bst.rank(12);
-//
-//	//bst.deleteElement(12);
-//
-//	//
-//	//bst.visitPre([](int key){ cout << key << " ";});
-//	// cout << "\n";
-//	// bst.visitSym([](int key){ cout << key << " ";});
-//	// cout << "\n";
-//	// bst.visitPost([](int key){ cout << key << " ";});
-//	// cout << "\n";
-//
-//	return EXIT_SUCCESS;
-//}
+int main(){
+
+	BinarySearchTree<int> bst;
+	{
+	bst.insert(12);
+	bst.insert(6);
+	bst.insert(15);
+	bst.insert(19);
+	bst.insert(5);
+	bst.insert(9);
+	bst.insert(8);
+	bst.insert(3);
+	bst.insert(4);
+
+	} //fill BST
+	bst.display();
+	bst.balance();
+	cout << "\n";
+	return EXIT_SUCCESS;
+}
