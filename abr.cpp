@@ -1,15 +1,3 @@
-/*
- -----------------------------------------------------------------------------------
- Laboratoire : ASD_09
- Fichier     : main.cpp
- Auteur(s)   : Maurice Lehmann, Nicolas Hungerbühler, Florian Schaufelberger
- Date        : 28.05.2019
-
- But         : Mise en place d'un Arbre Binaire de Recherche
-
- Compilateur : MinGW-g++ 6.3.0
- -----------------------------------------------------------------------------------
-*/
 //
 //  Binary Search Tree
 //
@@ -228,12 +216,16 @@ private:
 		r = new Node(key);
 		return true;
 	}
-	r->nbElements++;
 	if(key < r->key){
 		insert(r->left,key);
+                r->nbElements++;
+                return true;
 	}else if(key > r->key){
 		insert(r->right,key);
+                r->nbElements++;
+                return true;
 	}
+        return false;
   }
 
 public:
@@ -302,9 +294,9 @@ public:
   //
   void deleteMin() {
   	if(_root == nullptr){
-      throw logic_error("Tree is empty");
+      throw logic_error("Tree is empty");    
     }
-
+    	
     Node * currentNode = _root;
 	  Node * parentNode = nullptr;
     while(currentNode->left != nullptr){
@@ -375,15 +367,15 @@ private:
 		   return true;
 	   //Suppression de Hibbard
 	   }else{
-	   //trouver l'élément min droite
-	   Node* minRight = r->right;
-	   Node* parentMinRight = r;
+		   //trouver l'élément min droite
+		   Node* minRight = r->right;
+		   Node* parentMinRight = r;
 
-	   while(minRight->left != nullptr){
-		   parentMinRight = minRight;
-		   minRight = minRight->left;
-     	   minRight->nbElements--;
-	   }
+		   while(minRight->left != nullptr){
+			   parentMinRight = minRight;
+			   minRight = minRight->left;
+         minRight->nbElements--;
+		   }
 
        size_t x = r->nbElements-1;
 		   //Enfant du parent de minRight = enfant droite minRight
@@ -423,7 +415,7 @@ public:
   //
   const_reference nth_element(size_t n) const {
     if(n > _root->nbElements){
-      throw logic_error("tree has less elements than what you seek");
+      throw logic_error("arbre has less elements than what you seek");
     }
     return nth_element(_root,n);
   }
@@ -454,7 +446,7 @@ private:
       return nth_element(r->left, n);
     } else if(n > nbElementLeftNode){
       return nth_element(r->right, n - nbElementLeftNode - 1);
-    }
+    } 
   }
 
 public:
@@ -498,20 +490,20 @@ private:
          return rank(r->left, key);
       } else if (key > r->key) {
          nbElementRightNode = rank(r->right, key);
-
+  
          if (nbElementRightNode == -1) {
             return nbElementRightNode;
          }
          return nbElementRightNode + nbElementLeftNode + 1;
-
+         
       } else{
          return nbElementLeftNode;
       }
    }
-
-
-
-
+   
+   
+   
+   
 public:
   //
   // @brief linearise l'arbre
@@ -546,14 +538,7 @@ private:
   //             avez uniquement le droit d'utiliser l'opérateur ++.
   //
   static void linearize(Node* tree, Node*& list, size_t& cnt) noexcept {
-    if(tree == nullptr)
-		return;
-	linearize(tree->right,list,cnt);
-	tree->right = list;
-	list = tree;
-	++cnt;
-	linearize(tree->left,list,cnt);
-	tree->left = nullptr;
+    /* ... */
   }
 
 public:
@@ -569,12 +554,7 @@ public:
     size_t cnt = 0;
     Node* list = nullptr;
     linearize(_root,list,cnt);
-	cout << "cnt = " << cnt << "\n";
-	while(list != nullptr){
-		cout << list->key << " -> ";
-		list = list->right;
-	}
-    //arborize(_root,list,cnt);
+    arborize(_root,list,cnt);
   }
 
 private:
@@ -732,23 +712,40 @@ public:
   }
 };
 
-int main(){
-
-	BinarySearchTree<int> bst;
-	{
-	bst.insert(12);
-	bst.insert(6);
-	bst.insert(15);
-	bst.insert(19);
-	bst.insert(5);
-	bst.insert(9);
-	bst.insert(8);
-	bst.insert(3);
-	bst.insert(4);
-
-	} //fill BST
-	bst.display();
-	bst.balance();
-	cout << "\n";
-	return EXIT_SUCCESS;
-}
+//int main(){
+//
+//	BinarySearchTree<int> bst;
+//	{
+//	bst.insert(10);
+//	bst.insert(12);
+//	bst.insert(16);
+//	bst.insert(15);
+//	bst.insert(7);
+//
+//	bst.insert(5);
+//	bst.insert(11);
+//	bst.insert(4);
+//	bst.insert(2);
+//	bst.insert(6);
+//
+//	bst.insert(13);
+//	bst.insert(14);
+//	} //fill BST
+//
+//	 bst.deleteMin();
+//	 bst.deleteMin();
+//	bst.display();
+//        cout << bst.rank(12);
+//        
+//	//bst.deleteElement(12);
+//
+//	//
+//	//bst.visitPre([](int key){ cout << key << " ";});
+//	// cout << "\n";
+//	// bst.visitSym([](int key){ cout << key << " ";});
+//	// cout << "\n";
+//	// bst.visitPost([](int key){ cout << key << " ";});
+//	// cout << "\n";
+//
+//	return EXIT_SUCCESS;
+//}
