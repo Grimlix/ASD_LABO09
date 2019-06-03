@@ -518,10 +518,10 @@ public:
   // la methode publique arborize
   //
   void linearize() noexcept {
-    size_t cnt = 0;
-    Node* list = nullptr;
-    linearize(_root,list,cnt);
-    _root = list;
+	size_t cnt = 0;
+   Node* list = nullptr;
+   linearize(_root,list,cnt);
+   _root = list;
   }
 
 private:
@@ -538,7 +538,14 @@ private:
   //             avez uniquement le droit d'utiliser l'opérateur ++.
   //
   static void linearize(Node* tree, Node*& list, size_t& cnt) noexcept {
-    /* ... */
+	  if(tree == nullptr)
+			return;
+ 	linearize(tree->right,list,cnt);
+ 	tree->right = list;
+ 	list = tree;
+ 	++cnt;
+ 	linearize(tree->left,list,cnt);
+ 	tree->left = nullptr;
   }
 
 public:
