@@ -72,10 +72,16 @@ public:
    *  pointer sur les enfants de l'arbre à copier
    *
    */
-  BinarySearchTree( const BinarySearchTree& other ):_root(nullptr) {
+  BinarySearchTree( const BinarySearchTree& other ) :_root(nullptr) {
 	if(other._root != nullptr){
 		_root = new Node(other._root->key);
-		copyInOrder(other._root, _root);
+		try{
+			copyInOrder(other._root, _root);
+		}catch(...){
+			deleteSubTree(_root);
+			_root = nullptr;
+			throw;
+		}
 	}
   }
   /**
@@ -85,9 +91,19 @@ public:
    *
    */
   BinarySearchTree& operator= ( BinarySearchTree& other ) {
-    this->BinarySearchTree::~BinarySearchTree();
- 	new(this) BinarySearchTree<value_type>(other);
-	return *this;
+	  Node* tmpRoot = nullptr;
+	  if(other._root != nullptr){
+		  tmpRoot = new Node(other._root->key);
+		  try{
+			  copyInOrder(other._root, tmpRoot);
+		  }catch(...){
+			  deleteSubTree(tmpRoot);
+			  throw;
+		  }
+	  }
+	  this->BinarySearchTree::~BinarySearchTree();
+	  _root = tmpRoot;
+	  return *this;
   }
 
   /**
@@ -542,8 +558,8 @@ private:
 			return;
  	linearize(tree->right,list,cnt);
  	tree->right = list;
+	tree->nbElements = ++cnt;
  	list = tree;
- 	++cnt;
  	linearize(tree->left,list,cnt);
  	tree->left = nullptr;
   }
@@ -595,18 +611,8 @@ private:
 	   arborize(tree->left, list, (cnt - 1) / 2);
 	   list = racineList->right;
 	   arborize(tree->right, list, cnt / 2);
-
     }
-	Node* arborizeRecusive(Node*& list,size_t cnt){
-		if(cnt == 0)
-			return nullptr;
-		Node* leftRoot = arborizeRecusive(list,(cnt-1)/2);
-		Node* root = list;
-		list = list->right;
-		root->left = leftRoot;
-		root->right = arborizeRecusive(list,cnt/2);
-		return root;
-	}
+
   /*
   	TODO
    */
@@ -762,7 +768,13 @@ int main(){
 	bst.insert(4);
 
 	} //fill BST
+	BinarySearchTree<int> bst2;
+	BinarySearchTree<int> bst3(bst);
+
 	bst.display();
+	bst2 = bst;
+	bst3 = bst2;
+	bst2.display();
 	bst.balance();
 	bst.display();
 	cout << "\n";
