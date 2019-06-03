@@ -1,15 +1,3 @@
-/*
- -----------------------------------------------------------------------------------
- Laboratoire : ASD_09
- Fichier     : main.cpp
- Auteur(s)   : Maurice Lehmann, Nicolas Hungerbühler, Florian Schaufelberger
- Date        : 28.05.2019
-
- But         : Mise en place d'un Arbre Binaire de Recherche
-
- Compilateur : MinGW-g++ 6.3.0
- -----------------------------------------------------------------------------------
-*/
 //
 //  Binary Search Tree
 //
@@ -228,12 +216,16 @@ private:
 		r = new Node(key);
 		return true;
 	}
-	r->nbElements++;
 	if(key < r->key){
 		insert(r->left,key);
+        r->nbElements++;
+        return true;
 	}else if(key > r->key){
 		insert(r->right,key);
+        r->nbElements++;
+        return true;
 	}
+        return false;
   }
 
 public:
@@ -375,15 +367,15 @@ private:
 		   return true;
 	   //Suppression de Hibbard
 	   }else{
-	   //trouver l'élément min droite
-	   Node* minRight = r->right;
-	   Node* parentMinRight = r;
+		   //trouver l'élément min droite
+		   Node* minRight = r->right;
+		   Node* parentMinRight = r;
 
-	   while(minRight->left != nullptr){
-		   parentMinRight = minRight;
-		   minRight = minRight->left;
-     	   minRight->nbElements--;
-	   }
+		   while(minRight->left != nullptr){
+			   parentMinRight = minRight;
+			   minRight = minRight->left;
+         minRight->nbElements--;
+		   }
 
        size_t x = r->nbElements-1;
 		   //Enfant du parent de minRight = enfant droite minRight
@@ -423,7 +415,7 @@ public:
   //
   const_reference nth_element(size_t n) const {
     if(n > _root->nbElements){
-      throw logic_error("tree has less elements than what you seek");
+      throw logic_error("arbre has less elements than what you seek");
     }
     return nth_element(_root,n);
   }
@@ -508,6 +500,10 @@ private:
          return nbElementLeftNode;
       }
    }
+
+
+
+
 public:
   //
   // @brief linearise l'arbre
@@ -542,14 +538,7 @@ private:
   //             avez uniquement le droit d'utiliser l'opérateur ++.
   //
   static void linearize(Node* tree, Node*& list, size_t& cnt) noexcept {
-    if(tree == nullptr)
-		return;
-	linearize(tree->right,list,cnt);
-	tree->right = list;
-	list = tree;
-	++cnt;
-	linearize(tree->left,list,cnt);
-	tree->left = nullptr;
+    /* ... */
   }
 
 public:
@@ -565,12 +554,6 @@ public:
     size_t cnt = 0;
     Node* list = nullptr;
     linearize(_root,list,cnt);
-	Node* show = list;
-	while(show != nullptr){
-		cout << show->key << "->";
-		show = show->right;
-	}
-	cout << "\n";
     arborize(_root,list,cnt);
   }
 
