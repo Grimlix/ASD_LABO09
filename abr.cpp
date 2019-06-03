@@ -84,7 +84,7 @@ public:
    *  pointer sur les enfants de l'arbre à copier
    *
    */
-  BinarySearchTree( BinarySearchTree& other ):_root(nullptr) {
+  BinarySearchTree( const BinarySearchTree& other ):_root(nullptr) {
 	if(other._root != nullptr){
 		_root = new Node(other._root->key);
 		copyInOrder(other._root, _root);
@@ -508,10 +508,6 @@ private:
          return nbElementLeftNode;
       }
    }
-
-
-
-
 public:
   //
   // @brief linearise l'arbre
@@ -569,12 +565,13 @@ public:
     size_t cnt = 0;
     Node* list = nullptr;
     linearize(_root,list,cnt);
-	cout << "cnt = " << cnt << "\n";
-	while(list != nullptr){
-		cout << list->key << " -> ";
-		list = list->right;
+	Node* show = list;
+	while(show != nullptr){
+		cout << show->key << "->";
+		show = show->right;
 	}
-    //arborize(_root,list,cnt);
+	cout << "\n";
+    arborize(_root,list,cnt);
   }
 
 private:
@@ -590,8 +587,36 @@ private:
   // @param cnt  nombre d'elements de la liste que l'on doit utiliser pour
   //             arboriser le sous arbre
   //
-  static void arborize(Node*& tree, Node*& list, size_t cnt) noexcept {
-  }
+	static void arborize(Node*& tree, Node*& list, size_t cnt) noexcept {
+
+	   // alerte
+	   if (cnt == 0) {
+		  tree = nullptr;
+		  return;
+	   }
+
+	   // Chercher la racine
+	   Node* racineList = list;
+	   for (size_t i = 0; i < (cnt - 1) / 2; i++) {
+		  racineList = racineList->right;
+	   }
+	   tree = racineList;
+	   tree->nbElements = cnt;
+	   arborize(tree->left, list, (cnt - 1) / 2);
+	   list = racineList->right;
+	   arborize(tree->right, list, cnt / 2);
+
+    }
+	Node* arborizeRecusive(Node*& list,size_t cnt){
+		if(cnt == 0)
+			return nullptr;
+		Node* leftRoot = arborizeRecusive(list,(cnt-1)/2);
+		Node* root = list;
+		list = list->right;
+		root->left = leftRoot;
+		root->right = arborizeRecusive(list,cnt/2);
+		return root;
+	}
   /*
   	TODO
    */
@@ -749,6 +774,7 @@ int main(){
 	} //fill BST
 	bst.display();
 	bst.balance();
+	bst.display();
 	cout << "\n";
 	return EXIT_SUCCESS;
 }
