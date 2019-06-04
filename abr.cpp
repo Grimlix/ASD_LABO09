@@ -1,8 +1,15 @@
-//
-//  Binary Search Tree
-//
-//  Copyright (c) 2017 Olivier Cuisenaire. All rights reserved.
-//
+/*
+ -----------------------------------------------------------------------------------
+ Laboratoire : ASD_09
+ Fichier     : abr.cpp
+ Auteur(s)   : Maurice Lehmann, Nicolas Hungerbühler, Florian Schaufelberger
+ Date        : 03.06.2019
+
+ But         : Déclarations & définitions de classe BinarySearchTree
+
+ Compilateur : MinGW-g++ 6.3.0
+ -----------------------------------------------------------------------------------
+*/
 
 #include <cstdlib>
 #include <iostream>
@@ -75,6 +82,7 @@ public:
   BinarySearchTree( const BinarySearchTree& other ) :_root(nullptr) {
 	if(other._root != nullptr){
 		_root = new Node(other._root->key);
+		//En cas d'exception dans la copie, on supprime les noeuds déjà crées
 		try{
 			copyInOrder(other._root, _root);
 		}catch(...){
@@ -94,6 +102,7 @@ public:
 	  Node* tmpRoot = nullptr;
 	  if(other._root != nullptr){
 		  tmpRoot = new Node(other._root->key);
+		  //En cas d'exception dans la copie, on supprime les noeuds déjà crées
 		  try{
 			  copyInOrder(other._root, tmpRoot);
 		  }catch(...){
@@ -153,9 +162,9 @@ public:
 
 private:
 	/**
-	 * TODO
-	 * @param other   [description]
-	 * @param newNode [description]
+	 * @brief Copie un arbre en profondeur
+	 * @param other   Root de l'arbre à copier
+	 * @param copyNode Root du nouvel arbre copié
 	 */
   void copyInOrder(Node* other,Node* copyNode){
 	  if(other != nullptr){
@@ -188,10 +197,8 @@ private:
 		deleteSubTree(r->left);
 	if(r->right != nullptr)
 		deleteSubTree(r->right);
-
 	delete r;
   }
-
 public:
   //
   // @brief Insertion d'une cle dans l'arbre
@@ -221,9 +228,9 @@ private:
   //
   static bool insert(Node*& r, const_reference key) {
 
-	//Si la clé est déja présente dans l'arbre
-	//On doit être sur que la clé n'est pas déjà présente car
-	//on incrémentera les compteurs sur chaques noeus
+	//Si la clé est déja présente dans l'arbre,
+	//on doit être sûr que la clé n'est pas déjà présente car
+	//on incrémentera les compteurs sur chaques noeuds
 	if(contains(r,key)){
 		return false;
 	}
@@ -243,7 +250,6 @@ private:
 	}
         return false;
   }
-
 public:
   //
   // @brief Recherche d'une cle.
@@ -283,14 +289,12 @@ private:
 
 public:
   //
-  // @brief Recherche de la cle minimale.
+  // @brief Recherche itérative de la cle minimale
   //
   // @return une const reference a la cle minimale
   //
   // @exception std::logic_error si necessaire
   //
-  // vous pouvez mettre en oeuvre de manière iterative ou recursive a choix
-  // Remarque MAURICE : Pour faire de manière recursive, il faudrait un paramètre dans cette fonction non ?
   const_reference min() const {
 	if(_root == nullptr)
 		throw logic_error("Tree is empty");
@@ -302,36 +306,31 @@ public:
   }
 
   //
-  // @brief Supprime le plus petit element de l'arbre.
+  // @brief Supprime de manière itérative le plus petit element de l'arbre.
   //
   // @exception std::logic_error si necessaire
-  //
-  // vous pouvez mettre en oeuvre de manière iterative ou recursive a choix
   //
   void deleteMin() {
   	if(_root == nullptr){
       throw logic_error("Tree is empty");
     }
-
     Node * currentNode = _root;
-	  Node * parentNode = nullptr;
+	Node * parentNode = nullptr;
     while(currentNode->left != nullptr){
 	   	parentNode = currentNode;
   		currentNode = currentNode->left;
-      currentNode->nbElements--;
+    	currentNode->nbElements--;
   	}
 	//Si l'élément min à un enfant droite, on le raccroche au parent
  	//de l'élément min (a gauche)
-	if(currentNode->right != nullptr){
+	if(currentNode->right != nullptr)
 		parentNode->left = currentNode->right;
-	}else{
+	else
 		parentNode->left = nullptr;
-	}
+
     _root->nbElements--;
   	delete currentNode;
   }
-
-
   //
   // @brief Supprime l'element de cle key de l'arbre.
   //
@@ -340,10 +339,6 @@ public:
   // si l'element n'est pas present, la fonction ne modifie pas
   // l'arbre mais retourne false. Si l'element est present, elle
   // retourne vrai
-  //
-  // Ne pas modifier mais écrire la fonction
-  // récursive privée deleteElement(Node*&,const_reference)
-  //
   bool deleteElement( const_reference key) noexcept {
     return deleteElement( _root, key );
   }
@@ -383,27 +378,26 @@ private:
 		   return true;
 	   //Suppression de Hibbard
 	   }else{
-		   //trouver l'élément min droite
-		   Node* minRight = r->right;
-		   Node* parentMinRight = r;
+			//trouver l'élément min droite
+			Node* minRight = r->right;
+			Node* parentMinRight = r;
 
-		   while(minRight->left != nullptr){
-			   parentMinRight = minRight;
-			   minRight = minRight->left;
-         minRight->nbElements--;
-		   }
-
-       size_t x = r->nbElements-1;
-		   //Enfant du parent de minRight = enfant droite minRight
-		   parentMinRight->left = minRight->right;
-		   //enfant du minRight = deleteNode->right
-       r->right->nbElements--;
-		   minRight->right = r->right;
-		   minRight->left = r->left;
-		   r = minRight;
-       r->nbElements = x;
-		   delete deleteNode;
-		   return true;
+			while(minRight->left != nullptr){
+				parentMinRight = minRight;
+				minRight = minRight->left;
+         		minRight->nbElements--;
+		   	}
+       		size_t x = r->nbElements-1;
+		   	//Enfant du parent de minRight = enfant droite minRight
+		   	parentMinRight->left = minRight->right;
+		   	//enfant du minRight = deleteNode->right
+       		r->right->nbElements--;
+		   	minRight->right = r->right;
+		   	minRight->left = r->left;
+		   	r = minRight;
+       		r->nbElements = x;
+		   	delete deleteNode;
+		   	return true;
 	   }
    }
    return true;
@@ -425,10 +419,6 @@ public:
   // elements
   //
   // @exception std::logic_error si nécessaire
-  //
-  // ajoutez le code de gestion des exceptions, puis mettez en oeuvre
-  // la fonction recursive nth_element(Node*, n)
-  //
   const_reference nth_element(size_t n) const {
     if(n > _root->nbElements){
       throw logic_error("arbre has less elements than what you seek");
@@ -448,23 +438,20 @@ private:
   //
   static const_reference nth_element(Node* r, size_t n) noexcept {
     assert(r != nullptr);
-
     size_t nbElementLeftNode = 0;
 
     if(r->left) {
       nbElementLeftNode += r->left->nbElements;
     }
-
     if(n == nbElementLeftNode) {
       return r->key;
     }
     if(n < nbElementLeftNode) {
       return nth_element(r->left, n);
-    } else if(n > nbElementLeftNode){
+    }else if(n > nbElementLeftNode){
       return nth_element(r->right, n - nbElementLeftNode - 1);
     }
   }
-
 public:
   //
   // @brief position d'une cle dans l'ordre croissant des elements de l'arbre
@@ -472,10 +459,6 @@ public:
   // @param key la cle dont on cherche le rang
   //
   // @return la position entre 0 et size()-1, size_t(-1) si la cle est absente
-  //
-  // Ne pas modifier mais écrire la fonction
-  // récursive privée rank(Node*,const_reference)
-  //
   size_t rank(const_reference key) const noexcept {
     return rank(_root,key);
   }
@@ -491,35 +474,30 @@ private:
   //
    static size_t rank(Node* r, const_reference key) noexcept {
 
-      if (r == nullptr) {
-         return -1;
-      }
+      if(r == nullptr)
+	  	return -1;
 
       size_t nbElementLeftNode = 0;
       size_t nbElementRightNode = 0;
       // on vérifie si la partie de gauche est vide avant
-      if (r->left != nullptr) {
+      if (r->left != nullptr)
          nbElementLeftNode = r->left->nbElements;
-      }
 
-      if (key < r->key) {
+      if(key < r->key){
          return rank(r->left, key);
-      } else if (key > r->key) {
+      }else if (key > r->key){
          nbElementRightNode = rank(r->right, key);
 
          if (nbElementRightNode == -1) {
             return nbElementRightNode;
          }
+		 //On rajoute +1 car on compte de 1 à N
          return nbElementRightNode + nbElementLeftNode + 1;
 
-      } else{
-         return nbElementLeftNode;
+      }else{
+    	return nbElementLeftNode;
       }
    }
-
-
-
-
 public:
   //
   // @brief linearise l'arbre
@@ -528,16 +506,11 @@ public:
   // noeuds que precedemment, mais dont les pointeurs left sont tous egaux
   // a nullptr. Cette liste doit toujours respecter les conditions d'un
   // arbre binaire de recherche
-  //
-  // Ne pas modifier cette fonction qui sert essentiellement a tester la
-  // fonction recursive linearize(Node*, Node*&, size_t&) utilisée par
-  // la methode publique arborize
-  //
   void linearize() noexcept {
-	size_t cnt = 0;
-   Node* list = nullptr;
-   linearize(_root,list,cnt);
-   _root = list;
+	  size_t cnt = 0;
+	  Node* list = nullptr;
+	  linearize(_root,list,cnt);
+	  _root = list;
   }
 
 private:
@@ -554,8 +527,8 @@ private:
   //             avez uniquement le droit d'utiliser l'opérateur ++.
   //
   static void linearize(Node* tree, Node*& list, size_t& cnt) noexcept {
-	  if(tree == nullptr)
-			return;
+	if(tree == nullptr)
+		return;
  	linearize(tree->right,list,cnt);
  	tree->right = list;
 	tree->nbElements = ++cnt;
@@ -594,13 +567,10 @@ private:
   //             arboriser le sous arbre
   //
 	static void arborize(Node*& tree, Node*& list, size_t cnt) noexcept {
-
-	   // alerte
-	   if (cnt == 0) {
+	   if (!cnt) {
 		  tree = nullptr;
 		  return;
 	   }
-
 	   // Chercher la racine
 	   Node* racineList = list;
 	   for (size_t i = 0; i < (cnt - 1) / 2; i++) {
@@ -613,8 +583,10 @@ private:
 	   arborize(tree->right, list, cnt / 2);
     }
 
-  /*
-  	TODO
+  /**
+   * @brief Visite pré-ordonnée, de manière récursive
+   * @param f    Fonction d'affichage de la clé
+   * @param node Noeuds root de l'arbre à parcourir
    */
   template < typename Fn >
   void visitPreRecursif(Fn f, Node* node){
@@ -624,27 +596,31 @@ private:
 	visitPreRecursif(f,node->left);
 	visitPreRecursif(f,node->right);
   }
-  /*
-  	TODO
+  /**
+   * @brief Visite symetrique, de manière récursive
+   * @param f    Fonction d'affichage de la clé
+   * @param node Noeuds root de l'arbre à parcourir
    */
   template < typename Fn >
   void visitSymRecursif(Fn f, Node* node){
-   if(node == nullptr)
+	if(node == nullptr)
 	   return;
-   visitSymRecursif(f,node->left);
-   f(node->key);
-   visitSymRecursif(f,node->right);
+	visitSymRecursif(f,node->left);
+	f(node->key);
+	visitSymRecursif(f,node->right);
   }
-  /*
-   TODO
+  /**
+   * @brief Visite post-ordonnée, de manière récursive
+   * @param f    Fonction d'affichage de la clé
+   * @param node Noeuds root de l'arbre à parcourir
    */
   template < typename Fn >
   void visitPostRecursif(Fn f, Node* node){
-   if(node == nullptr)
-	  return;
-   visitPostRecursif(f,node->left);
-   visitPostRecursif(f,node->right);
-   f(node->key);
+	if(node == nullptr)
+		return;
+	visitPostRecursif(f,node->left);
+	visitPostRecursif(f,node->right);
+	f(node->key);
   }
 public:
   //
@@ -752,31 +728,3 @@ public:
     }
   }
 };
-
-int main(){
-
-	BinarySearchTree<int> bst;
-	{
-	bst.insert(12);
-	bst.insert(6);
-	bst.insert(15);
-	bst.insert(19);
-	bst.insert(5);
-	bst.insert(9);
-	bst.insert(8);
-	bst.insert(3);
-	bst.insert(4);
-
-	} //fill BST
-	BinarySearchTree<int> bst2;
-	BinarySearchTree<int> bst3(bst);
-
-	bst.display();
-	bst2 = bst;
-	bst3 = bst2;
-	bst2.display();
-	bst.balance();
-	bst.display();
-	cout << "\n";
-	return EXIT_SUCCESS;
-}
